@@ -84,28 +84,23 @@ if ($securityGroup.change.after.vpc_id -eq $subnet.change.after.vpc_id) {
     throw "`u{1F635} Unable to validate security group to VPC association. Please make sure that the security group is associated with the same VPC you deployed new subnet to and try again. "
 }
 
-$httpIngressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_ingress_rule"} | Where-Object {$_.change.after.to_port -eq "80" }
+$httpIngressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_ingress_rule"} | Where-Object {$_.change.after.to_port -eq "3000" }
 if ($httpIngressRule -and ($httpIngressRule.Count -eq 1 )) { 
-    Write-Output "`u{2705} Checking if http security group rule is present in the plan - OK. "
+    Write-Output "`u{2705} Checking if the grafana security group rule is present in the plan - OK. "
 } else { 
-    throw "`u{1F635} Unable to find http security group rule resource, which allows tcp port 80. Please make sure that you added it to the task module and try again. "
+    throw "`u{1F635} Unable to find grafana security group rule resource, which allows tcp port 3000. Please make sure that you added it to the task module and try again. "
 }
 if ($httpIngressRule.change.after.cidr_ipv4 -eq "0.0.0.0/0") { 
-    Write-Output "`u{2705} Checking the http security group rule cidr block - OK. "
+    Write-Output "`u{2705} Checking the grafana security group rule cidr block - OK. "
 } else { 
-    throw "`u{1F635} Unable to validate http security group cidr block. Please make sure that the rule allows connections for this protocol from any IPs ('0.0.0.0/0') try again. "
+    throw "`u{1F635} Unable to validate grafana security group cidr block. Please make sure that the rule allows connections to grafana from any IPs ('0.0.0.0/0') try again. "
 }
 
-$httpsIngressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_ingress_rule"} | Where-Object {$_.change.after.to_port -eq "443" }
-if ($httpsIngressRule -and ($httpsIngressRule.Count -eq 1 )) { 
-    Write-Output "`u{2705} Checking if https security group rule is present in the plan - OK. "
+$httpsEgressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_egress_rule"} 
+if ($httpsEgressRule -and ($httpsEgressRule.Count -eq 1 )) { 
+    Write-Output "`u{2705} Checking if the outbound security group rule is present in the plan - OK. "
 } else { 
-    throw "`u{1F635} Unable to find https security group rule resource, which allows tcp port 443. Please make sure that you added it to the task module and try again. "
-}
-if ($httpsIngressRule.change.after.cidr_ipv4 -eq "0.0.0.0/0") { 
-    Write-Output "`u{2705} Checking the https security group rule cidr block - OK. "
-} else { 
-    throw "`u{1F635} Unable to validate https security group cidr block. Please make sure that the rule allows connections for this protocol from any IPs ('0.0.0.0/0') try again. "
+    throw "`u{1F635} Unable to the outbound security group rule resource. Please make sure that you uncommented it and try again. "
 }
 
 $sshIngressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_ingress_rule"} | Where-Object {$_.change.after.to_port -eq "22" }
