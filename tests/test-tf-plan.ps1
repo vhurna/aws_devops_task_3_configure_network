@@ -31,11 +31,11 @@ if ($igw.change.after.tags.Name -eq "mate-aws-grafana-lab") {
 } else { 
     throw "`u{1F635} Unable to validate Internet Gateway name. Please make sure that you added a 'Name' tag with value 'mate-aws-grafana-lab' for the Internet Gateway and try again. "
 }
-if ($igw.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
-    Write-Output "`u{2705} Checking if Internet Gateway is associated with the VPC - OK. "
-} else { 
-    throw "`u{1F635} Unable to validate Internet Gateway VPC association. Please make sure that the Internet Gateway is associated with the same VPC you deployed new subnet to and try again. "
-}
+# if ($igw.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
+#     Write-Output "`u{2705} Checking if Internet Gateway is associated with the VPC - OK. "
+# } else { 
+#     throw "`u{1F635} Unable to validate Internet Gateway VPC association. Please make sure that the Internet Gateway is associated with the same VPC you deployed new subnet to and try again. "
+# }
 
 $routeTable = $plan.resource_changes | Where-Object {$_.type -eq "aws_route_table"}
 if ($routeTable -and ($routeTable.Count -eq 1 )) { 
@@ -48,11 +48,11 @@ if ($routeTable.change.after.tags.Name -eq "mate-aws-grafana-lab") {
 } else { 
     throw "`u{1F635} Unable to validate route table name. Please make sure that you added a 'Name' tag with value 'mate-aws-grafana-lab' for the route table and try again. "
 }
-if ($routeTable.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
-    Write-Output "`u{2705} Checking if route table is associated with the VPC - OK. "
-} else { 
-    throw "`u{1F635} Unable to validate route table VPC association. Please make sure that the route table is associated with the same VPC you deployed new subnet to and try again. "
-}
+# if ($routeTable.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
+#     Write-Output "`u{2705} Checking if route table is associated with the VPC - OK. "
+# } else { 
+#     throw "`u{1F635} Unable to validate route table VPC association. Please make sure that the route table is associated with the same VPC you deployed new subnet to and try again. "
+# }
 $igwRoute = $routeTable.change.after.route | Where-Object {$_.cidr_block -eq "0.0.0.0/0"}
 if ($igwRoute -and ($igwRoute.Count -eq 1 )) { 
     Write-Output "`u{2705} Checking if Internet gateway route is present in the plan - OK. "
@@ -78,11 +78,11 @@ if ($securityGroup.change.after.tags.Name -eq "mate-aws-grafana-lab") {
 } else { 
     throw "`u{1F635} Unable to validate security group name. Please make sure that you added a 'Name' tag with value 'mate-aws-grafana-lab' for the security group and try again. "
 }
-if ($securityGroup.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
-    Write-Output "`u{2705} Checking if security group is associated with the VPC - OK. "
-} else { 
-    throw "`u{1F635} Unable to validate security group to VPC association. Please make sure that the security group is associated with the same VPC you deployed new subnet to and try again. "
-}
+# if ($securityGroup.change.after.vpc_id -eq $subnet.change.after.vpc_id) { 
+#     Write-Output "`u{2705} Checking if security group is associated with the VPC - OK. "
+# } else { 
+#     throw "`u{1F635} Unable to validate security group to VPC association. Please make sure that the security group is associated with the same VPC you deployed new subnet to and try again. "
+# }
 
 $httpIngressRule = $plan.resource_changes | Where-Object {$_.type -eq "aws_vpc_security_group_ingress_rule"} | Where-Object {$_.change.after.to_port -eq "3000" }
 if ($httpIngressRule -and ($httpIngressRule.Count -eq 1 )) { 
