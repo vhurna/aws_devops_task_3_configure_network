@@ -41,6 +41,8 @@ To complete this task:
     - Use the [`aws_security_group`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group.html) resource to create a security group with the `mate-aws-grafana-lab` name (and a name tag). Make sure the security group is associated with your VPC. 
 
     - Use the [`aws_vpc_security_group_ingress_rule`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) resource to create security group rules, which allow HTTP and HTTPS traffic from all source IPs, and SSH traffic from your public IP. To get your public IP, you can use an [online tool](https://whatismyipaddress.com/). Please note that when creating a security rule with this terraform resource, you have to specify the destination port range rather than a single port. For example, to allow connections to TCP ports from 255 to 512, you have to set `from_port` to 255 and `to_port` to 512. If you want to whitelist a single TCP port 8080, you have to set both resource properties `from_port` and `to_port` to 8080.  
+   
+    - Uncommend (and update if required) the outbound security group rule, which allows all traffic from the virtual machine. It required by the VM to have an Internet access.
 
 3. After adding the code to the `main.tf` file, review the `outputs.tf` file and make sure that all output variables are valid and can output relevant values, as described in the output variable descriptions. 
 
