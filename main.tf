@@ -4,7 +4,7 @@ resource "aws_subnet" "grafana" {
   availability_zone = "eu-central-1a"
 
   tags = {
-    Name = "grafana-subnet"
+    Name = "grafana"
   }
 }
 
@@ -12,7 +12,7 @@ resource "aws_internet_gateway" "grafana_igw" {
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "mate-aws-grafana-lab-igw"
+    Name = "mate-aws-grafana-lab"
   }
 }
 
@@ -25,7 +25,7 @@ resource "aws_route_table" "grafana_rt" {
   }
 
   tags = {
-    Name = "mate-aws-grafana-lab-rt"
+    Name = "mate-aws-grafana-lab"
   }
 }
 
@@ -35,19 +35,12 @@ resource "aws_route_table_association" "grafana_rta" {
 }
 
 resource "aws_security_group" "grafana_sg" {
-  name        = "mate-aws-grafana-lab-sg"
+  name        = "mate-aws-grafana-lab"
   description = "Allow HTTP, HTTPS, SSH to Grafana"
   vpc_id      = var.vpc_id
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
-    Name = "mate-aws-grafana-lab-sg"
+    Name = "mate-aws-grafana-lab"
   }
 }
 
@@ -69,11 +62,29 @@ resource "aws_security_group_rule" "allow_https" {
   security_group_id = aws_security_group.grafana_sg.id
 }
 
-resource "aws_security_group_rule" "allow_ssh" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["185.136.134.23/32"]
+resource "aws_vpc_security_group_egress_rule" "egress" {
   security_group_id = aws_security_group.grafana_sg.id
+
+  ip_protocol = "-1"
+  from_port   = 0
+  to_port     = 0
+  cidr_ipv4   = "0.0.0.0/0"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ssh" {
+  security_group_id = aws_security_group.grafana_sg.id
+
+  ip_protocol = "tcp"
+  from_port   = 22
+  to_port     = 22
+  cidr_ipv4   = "185.136.134.23/32"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "grafana" {
+  security_group_id = aws_security_group.grafana_sg.id
+
+  ip_protocol = "tcp"
+  from_port   = 3000
+  to_port     = 3000
+  cidr_ipv4   = "0.0.0.0/0"
 }
